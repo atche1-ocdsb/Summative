@@ -57,9 +57,9 @@ public class Grid {
         //declare an array to store possible coords for extending ship (2nd coord of ship)
         String[] arrEndCoord;
         
-        //declare two String arrays to store all coords for current ship and comparing ship
-        String[] arrCurrent;
-        String[] arrOther;
+        //declare two String ArrayLists to store all coords for current ship and comparing ship
+        ArrayList<String> currentList = new ArrayList<String>();
+        ArrayList<String> otherList = new ArrayList<String>();
         
         //declare two bytes to store row index and col index
         byte bytRow;
@@ -146,7 +146,7 @@ public class Grid {
             //k currently loops through each ship individually
             for (int k = 0; k < shipList.size(); k += 2) {    
                 //populate all coords from comparing ship
-                arrOther = allCoords(shipList.get(k), shipList.get(k+1));
+                otherList = allCoords(shipList.get(k), shipList.get(k+1));
                 
                 //for loop to check if each way of expanding works
                 for (int l = 1; l <= 4; l++) {
@@ -157,13 +157,13 @@ public class Grid {
                     }
                     else {
                         //populate all current coords
-                        arrCurrent = allCoords(strCoord, arrEndCoord[l]);
+                        currentList = allCoords(strCoord, arrEndCoord[l]);
                         
                         //check that no coords overlap
-                        for (int m = 0; m < arrCurrent.length; m++) {
+                        for (int m = 0; m < currentList.size(); m++) {
                             ////check against every "other" coordinate
-                            for (int n = 0; n < arrOther.length; n++) {
-                                if (arrCurrent[m].equals(arrOther[n])) {
+                            for (int n = 0; n < otherList.size(); n++) {
+                                if (currentList.get(m).equals(otherList.get(n))) {
                                     //overlapping
                                     bolOverlap = true;
                                 }
@@ -216,11 +216,8 @@ public class Grid {
         return shipList;
     }
     
-    //code a String[] method to return all of the coords of a ship given start and end
-    public String[] allCoords(String strStart, String strEnd) {
-        //declare an array to store the coordinates from the arrayList
-        String[] arrCoords;
-        
+    //code a ArrayList<String> method to return all of the coords of a ship given start and end
+    public ArrayList<String> allCoords(String strStart, String strEnd) {
         //declare and initialize an ArrayList to store coords
         ArrayList<String> coordList = new ArrayList<String>();
 
@@ -261,22 +258,17 @@ public class Grid {
             }
         }
         
-        //initialize array with arraylist size
-        arrCoords = new String[coordList.size()];
-        
-        //populate the array with the values from the arrayList
-        for (int i = 0; i < coordList.size(); i++) {
-            arrCoords[i] = coordList.get(i);
-        }
-        
-        //return array of coords
-        return arrCoords;
+        //return ArrayList of coords
+        return coordList;
     }
     
     //code a char[][] method to use the coordinate list to generate a 10 x 10 board with the ships in place
     public char[][] initializeGrid() {
         //declare and initialize a 10x10 grid to be populated
         char[][] arrBoard = new char[10][10];
+        
+        //declare an ArrayList to store all coords for current ship
+        ArrayList<String> currentList = new ArrayList<String>();
         
         //fill the grid with water '~'
         for (int r = 0; r < arrBoard.length; r++) {
@@ -286,7 +278,13 @@ public class Grid {
             }
         }
         
-        
+        //for loop to loop through each ship
+        for (int i = 0; i < this.coordsList.size(); i += 2) {
+            //populate all coords from ship
+            currentList = allCoords(this.coordsList.get(i), this.coordsList.get(i+1));
+            
+            //for loop to loop through each
+        }
         
         
         //return the grid
