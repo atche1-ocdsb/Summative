@@ -47,6 +47,15 @@ public class Grid {
         
         //using the given coordinates, populate the arrGrid
         this.arrCompGrid = initializeGrid();
+        
+        //output the grid
+        for (int r = 0; r < this.arrCompGrid.length; r++) {
+            for (int c = 0; c < this.arrCompGrid.length; c++) {
+                //output
+                System.out.print(arrCompGrid[r][c]);
+            }
+            System.out.println();
+        }
     }
     
     //code a ArrayList<String> method to randomly generate the ship coords for the computer grid and return them into the default constructor
@@ -242,16 +251,16 @@ public class Grid {
         }
         else {  //vertical
             //check which way it extends
-            if (strStart.charAt(1) < strEnd.charAt(1)) { //down
+            if (Character.getNumericValue(strStart.charAt(1)) < Character.getNumericValue(strEnd.charAt(1))) { //down
                 //for loop to loop until end coord
-                for (int i = strStart.charAt(1); i <= strEnd.charAt(1); i++) {
+                for (int i = Character.getNumericValue(strStart.charAt(1)); i <= Character.getNumericValue(strEnd.charAt(1)); i++) {
                     //add coordinates
                     coordList.add(strStart.charAt(0) + String.valueOf(i));
                 }
             }
             else { //up
                 //for loop to loop until end coord
-                for (int i = strStart.charAt(1); i >= strEnd.charAt(1); i++) {
+                for (int i = Character.getNumericValue(strStart.charAt(1)); i >= Character.getNumericValue(strEnd.charAt(1)); i++) {
                     //add coordinates
                     coordList.add(strStart.charAt(0) + String.valueOf(i));
                 }
@@ -283,9 +292,31 @@ public class Grid {
             //populate all coords from ship
             currentList = allCoords(this.coordsList.get(i), this.coordsList.get(i+1));
             
-            //for loop to loop through each
+            //for loop to loop through each coordinate
+            for (int j = 0; j < currentList.size(); j++) {
+                //if statement to check what type of ship it is
+                if (i == 0) {   //Carrier
+                    //rewrite 'C' for all coords
+                    arrBoard[Character.getNumericValue(currentList.get(j).charAt(1))][COLUMN_INDEX[currentList.get(j).charAt(0)]] = 'C';
+                }
+                else if (i == 2) {  //Battleship
+                    //rewrite 'B' for all coords
+                    arrBoard[Character.getNumericValue(currentList.get(j).charAt(1))][COLUMN_INDEX[currentList.get(j).charAt(0)]] = 'B';
+                }
+                else if (i == 4) {  //Destroyer
+                    //rewrite 'D' for all coords
+                    arrBoard[Character.getNumericValue(currentList.get(j).charAt(1))][COLUMN_INDEX[currentList.get(j).charAt(0)]] = 'D';
+                }
+                else if (i == 6) {  //Submarine
+                    //rewrite 'S' for all coords
+                    arrBoard[Character.getNumericValue(currentList.get(j).charAt(1))][COLUMN_INDEX[currentList.get(j).charAt(0)]] = 'S';
+                }
+                else if (i == 8) {  //Patrolboat
+                    //rewrite 'P' for all coords
+                    arrBoard[Character.getNumericValue(currentList.get(j).charAt(1))][COLUMN_INDEX[currentList.get(j).charAt(0)]] = 'P';
+                }
+            }
         }
-        
         
         //return the grid
         return arrBoard;
