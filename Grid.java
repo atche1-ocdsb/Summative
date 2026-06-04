@@ -6,6 +6,7 @@
  * @version (June 2nd - June _)
  */
 import java.util.ArrayList; //import ArrayLists to be used to store the coords of the ships
+import java.util.Arrays;    //used to use indexOf method on normal arrays
 
 public class Grid {
     //declare a private instance ArrayList to be initialized throught the parameterized constructor to store the user ship coords
@@ -52,15 +53,28 @@ public class Grid {
         //declare an array to store possible coords for extending ship (2nd coord of ship)
         String[] arrEndCoord;
         
+        //declare two String arrays to store all coords for current ship and comparing ship
+        String[] arrCurrent;
+        String[] arrOther;
+        
         //declare two bytes to store row index and col index
         byte bytRow;
         byte bytCol;
+        
+        //declare a byte to store ship length
+        byte bytSize;
+        
+        //declare a byte to store the final amount of possible expansions
+        byte bytOptions = 0;
         
         //declare a string to momentarily store the created coords
         String strCoord;
         
         //declare a boolean to deal with regeneration
         boolean bolLoop;
+        
+        //declare a boolean to deal with overlapping
+        boolean bolOverlap = false;
         
         //for loop to run five times
         for (int i = 0; i < 5; i++) {
@@ -86,47 +100,175 @@ public class Grid {
             }
             while (bolLoop);
             
-            //add the coordinate to the arrayList
-            shipList.add(strCoord);
+            //check which ship it is based on i variable to generate second coord
+            if (i == 0) {       //Carrier - size 5
+                bytSize = 5;
+            }
+            else if (i == 1) {  //Battleship - size 4
+                bytSize = 4;
+            }
+            else if (i == 2) {  //Destroyer - size 3
+                bytSize = 3;
+            }
+            else if (i == 3) {  //Submarine - size 3
+                bytSize = 3;
+            }
+            else {  //Patrolboat - size 2
+                bytSize = 2;
+            }
             
             //reset end coord array to default of 0
             arrEndCoord = new String[]{"0", "0", "0", "0"};
             
-            //check which ship it is based on i variable to generate second coord
-            if (i == 0) {       //Carrier - size 5
-                //check how many of the four positions are possible to extend: up, right, down, left
-                if (bytRow - 4 >= 0) { //can extend up
-                    //populate 1st slot of end coord array
-                    arrEndCoord[0] = arrColumns[bytCol] + String.valueOf(bytRow - 4);
-                }
-                if (bytRow - 4 >= 0) { //can extend right
-                    //populate 1st slot of end coord array
-                    arrEndCoord[0] = arrColumns[bytCol] + String.valueOf(bytRow - 4);
-                }
-                if (bytRow + 4 >= 0) { //can extend down
-                    //populate 3rd slot of end coord array
-                    arrEndCoord[0] = arrColumns[bytCol] + String.valueOf(bytRow + 4);
-                }
-                if (bytRow - 4 >= 0) { //can extend up
-                    //populate 1st slot of end coord array
-                    arrEndCoord[0] = arrColumns[bytCol] + String.valueOf(bytRow - 4);
+            //check how many of the four positions are possible to extend: up, right, down, left
+            if (bytRow - (bytSize + 1) >= 0) { //can extend up
+                //populate 1st slot of end coord array
+                arrEndCoord[0] = arrColumns[bytCol] + String.valueOf(bytRow - (bytSize + 1));
+            }
+            if (bytCol + (bytSize + 1) <= 9) { //can extend right
+                //populate 2nd slot of end coord array
+                arrEndCoord[1] = arrColumns[bytCol + (bytSize + 1)] + String.valueOf(bytRow);
+            }
+            if (bytRow + (bytSize + 1) <= 9) { //can extend down
+                //populate 3rd slot of end coord array
+                arrEndCoord[2] = arrColumns[bytCol] + String.valueOf(bytRow + (bytSize + 1));
+            }
+            if (bytCol - (bytSize + 1) >= 0) { //can extend left
+                //populate 4th slot of end coord array
+                arrEndCoord[3] = arrColumns[bytCol - (bytSize + 1)] + String.valueOf(bytRow);
+            }
+            
+            //for loop to loop through coord list and make sure it extands in a way to not overlap with other ships
+            //k currently loops through each ship individually
+            for (int k = 0; k < shipList.size(); k += 2) {    
+                //populate all coords from comparing ship
+                arrOther = allCoords(shipList.get(k), shipList.get(k+1));
+                
+                //for loop to check if each way of expanding works
+                for (int l = 1; l <= 4; l++) {
+                    //if statement to check if coord exist
+                    if (arrEndCoord[l].equals("0")) {
+                        //skip
+                        continue;
+                    }
+                    else {
+                        //populate all current coords
+                        arrCurrent = allCoords(strCoord, arrEndCoord[l]);
+                        
+                        //check that no coords overlap
+                        for (int m = 0; m < arrCurrent.length; m++) {
+                            ////check against every "other" coordinate
+                            for (int n = 0; n < arrOther.length; n++) {
+                                if (arrCurrent[m].equals(arrOther[n])) {
+                                    //overlapping
+                                    bolOverlap = true;
+                                }
+                            }
+                        }
+                    }
+                    
+                    //if overlapping set this extension to 0
+                    if (bolOverlap) {
+                        //set to 0
+                        arrEndCoord[l] = "0";
+                        
+                        //reset overlap
+                        bolOverlap = false;
+                    }
                 }
             }
-            else if (i == 1) {  //Battleship - size 4
-                
+            
+            //check how many non zero end coords are left
+            for (int j = 0; j < arrEndCoord.length; j++) {
+                if (!arrEndCoord[j].equals("0")) {
+                    //add to counter
+                    bytOptions++;
+                }
             }
-            else if (i == 2) {  //Destroyer - size 3
-                
+            
+            //if none, restart entire loop - regenerate new start
+            //otherwise randomise from the ones left
+            if (bytOptions == 0) {
+                //rerandomize by adjusting the "i" for loop variable. This will rerandomize the same ship
+                i--;
             }
-            else if (i == 3) {  //Submarine - size 3
+            else {
+                //since it can be expanded add 1st coord to the arrayList
+                shipList.add(strCoord);
                 
-            }
-            else if (i == 4) {  //Patrolboat - size 2
+                //randomly choose out of the x amount of options
+                do {
+                    //repopulate coord by reusing coord variable
+                    strCoord = arrEndCoord[(int)(Math.random() * 4)];
+                }
+                while (strCoord.equals("0")); //loop if 0 is picked
                 
+                //add the end coord
+                shipList.add(strCoord);
             }
         }
         
         //return the coord list
         return shipList;
+    }
+    
+    //code a String[] method to return all of the coords of a ship given start and end
+    public String[] allCoords(String strStart, String strEnd) {
+        //declare an array to store the coordinates from the arrayList
+        String[] arrCoords;
+        
+        //declare and initialize an ArrayList to store coords
+        ArrayList<String> coordList = new ArrayList<String>();
+        
+        //declare and initialize a char array of the 10 letters representing the columns
+        char[] arrColumns = new char[]{'A','B','C','D','E','F','G','H','I','J'};
+
+        //check if ship is vertical or horizontal
+        if (strStart.charAt(1) == strEnd.charAt(1)) {   //horizontal
+            //check which way it extends
+            if (Arrays.asList(arrColumns).indexOf(strStart.charAt(0)) < Arrays.asList(arrColumns).indexOf(strEnd.charAt(0))) { //extends right
+                //for loop to loop until end coord
+                for (int i = Arrays.asList(arrColumns).indexOf(strStart.charAt(0)); i <= Arrays.asList(arrColumns).indexOf(strEnd.charAt(0)); i++) {
+                    //add coordinates
+                    coordList.add(arrColumns[i] + String.valueOf(strStart.charAt(1)));
+                }
+                
+            }
+            else { //extends left
+                //for loop to loop until end coord
+                for (int i = Arrays.asList(arrColumns).indexOf(strStart.charAt(0)); i >= Arrays.asList(arrColumns).indexOf(strEnd.charAt(0)); i--) {
+                    //add coordinates
+                    coordList.add(arrColumns[i] + String.valueOf(strStart.charAt(1)));
+                }
+            }
+        }
+        else {  //vertical
+            //check which way it extends
+            if (strStart.charAt(1) < strEnd.charAt(1)) { //down
+                //for loop to loop until end coord
+                for (int i = strStart.charAt(1); i <= strEnd.charAt(1); i++) {
+                    //add coordinates
+                    coordList.add(strStart.charAt(0) + String.valueOf(i));
+                }
+            }
+            else { //up
+                //for loop to loop until end coord
+                for (int i = strStart.charAt(1); i >= strEnd.charAt(1); i++) {
+                    //add coordinates
+                    coordList.add(strStart.charAt(0) + String.valueOf(i));
+                }
+            }
+        }
+        
+        //initialize array with arraylist size
+        arrCoords = new String[coordList.size()];
+        
+        //populate the array with the values from the arrayList
+        for (int i = 0; i < coordList.size(); i++) {
+            arrCoords[i] = coordList.get(i);
+        }
+        
+        //return array of coords
+        return arrCoords;
     }
 }
