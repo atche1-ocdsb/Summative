@@ -9,6 +9,8 @@ import java.util.ArrayList; //import ArrayLists to be used to store the coords o
 import java.util.Arrays;    //used to use indexOf method on normal arrays
 
 public class Grid {
+    //declara a final global char array of the 10 letters representing the columns
+    final char[] COLUMN_INDEX = new char[]{'A','B','C','D','E','F','G','H','I','J'};
     //declare a private instance ArrayList to be initialized throught the parameterized constructor to store the user ship coords
     /* Ship order:
      *  Index 0 & 1 -> Carrier start & end
@@ -22,8 +24,11 @@ public class Grid {
      */
     private ArrayList<String> coordsList;
     
-    //declare and initialize a private 2d array of type char to be used as the 10 by 10 game grids
-    private char[][] arrGrid = new char[10][10];
+    //declare and initialize a private 2d array of type char to be used as the 10 by 10 game grids to store users grid
+    private char[][] arrUserGrid = new char[10][10];
+    
+    //declare and initialize a private 2d array of type char to be used as the 10 by 10 game grids to store computers grid
+    private char[][] arrCompGrid = new char[10][10];
     
     
     //code a parameterized constructor to initialize the coordinate when the user's board is being created
@@ -31,7 +36,8 @@ public class Grid {
         //initialize coords ArrayList
         this.coordsList = c;
         
-        
+        //using the given coordinates, populate the arrGrid
+        this.arrUserGrid = initializeGrid();
     }
     
     //code a default constructor to be called when creating the computer's board and used to randomize the ship coords
@@ -39,16 +45,14 @@ public class Grid {
         //initialize the coords ArrayList using random generated ships positions
         this.coordsList = generateShips();
         
-        
+        //using the given coordinates, populate the arrGrid
+        this.arrCompGrid = initializeGrid();
     }
     
     //code a ArrayList<String> method to randomly generate the ship coords for the computer grid and return them into the default constructor
     public ArrayList<String> generateShips() {
         //declare and initlialize an ArrayList to store the coords of the ships
         ArrayList<String> shipList = new ArrayList<String>();
-        
-        //declare and initialize a char array of the 10 letters representing the columns
-        char[] arrColumns = new char[]{'A','B','C','D','E','F','G','H','I','J'};
         
         //declare an array to store possible coords for extending ship (2nd coord of ship)
         String[] arrEndCoord;
@@ -88,7 +92,7 @@ public class Grid {
                 bytCol = (byte)(Math.random() * 10);
                 
                 //find the column letter and add it to the string, followed by row number
-                strCoord = arrColumns[bytCol] + String.valueOf(bytRow);
+                strCoord = COLUMN_INDEX[bytCol] + String.valueOf(bytRow);
                 
                 //check if this coordinate is already in the list, if so regenerate
                 for (int j = 0; j < shipList.size(); j++) {
@@ -123,19 +127,19 @@ public class Grid {
             //check how many of the four positions are possible to extend: up, right, down, left
             if (bytRow - (bytSize + 1) >= 0) { //can extend up
                 //populate 1st slot of end coord array
-                arrEndCoord[0] = arrColumns[bytCol] + String.valueOf(bytRow - (bytSize + 1));
+                arrEndCoord[0] = COLUMN_INDEX[bytCol] + String.valueOf(bytRow - (bytSize + 1));
             }
             if (bytCol + (bytSize + 1) <= 9) { //can extend right
                 //populate 2nd slot of end coord array
-                arrEndCoord[1] = arrColumns[bytCol + (bytSize + 1)] + String.valueOf(bytRow);
+                arrEndCoord[1] = COLUMN_INDEX[bytCol + (bytSize + 1)] + String.valueOf(bytRow);
             }
             if (bytRow + (bytSize + 1) <= 9) { //can extend down
                 //populate 3rd slot of end coord array
-                arrEndCoord[2] = arrColumns[bytCol] + String.valueOf(bytRow + (bytSize + 1));
+                arrEndCoord[2] = COLUMN_INDEX[bytCol] + String.valueOf(bytRow + (bytSize + 1));
             }
             if (bytCol - (bytSize + 1) >= 0) { //can extend left
                 //populate 4th slot of end coord array
-                arrEndCoord[3] = arrColumns[bytCol - (bytSize + 1)] + String.valueOf(bytRow);
+                arrEndCoord[3] = COLUMN_INDEX[bytCol - (bytSize + 1)] + String.valueOf(bytRow);
             }
             
             //for loop to loop through coord list and make sure it extands in a way to not overlap with other ships
@@ -219,26 +223,23 @@ public class Grid {
         
         //declare and initialize an ArrayList to store coords
         ArrayList<String> coordList = new ArrayList<String>();
-        
-        //declare and initialize a char array of the 10 letters representing the columns
-        char[] arrColumns = new char[]{'A','B','C','D','E','F','G','H','I','J'};
 
         //check if ship is vertical or horizontal
         if (strStart.charAt(1) == strEnd.charAt(1)) {   //horizontal
             //check which way it extends
-            if (Arrays.asList(arrColumns).indexOf(strStart.charAt(0)) < Arrays.asList(arrColumns).indexOf(strEnd.charAt(0))) { //extends right
+            if (Arrays.asList(COLUMN_INDEX).indexOf(strStart.charAt(0)) < Arrays.asList(COLUMN_INDEX).indexOf(strEnd.charAt(0))) { //extends right
                 //for loop to loop until end coord
-                for (int i = Arrays.asList(arrColumns).indexOf(strStart.charAt(0)); i <= Arrays.asList(arrColumns).indexOf(strEnd.charAt(0)); i++) {
+                for (int i = Arrays.asList(COLUMN_INDEX).indexOf(strStart.charAt(0)); i <= Arrays.asList(COLUMN_INDEX).indexOf(strEnd.charAt(0)); i++) {
                     //add coordinates
-                    coordList.add(arrColumns[i] + String.valueOf(strStart.charAt(1)));
+                    coordList.add(COLUMN_INDEX[i] + String.valueOf(strStart.charAt(1)));
                 }
                 
             }
             else { //extends left
                 //for loop to loop until end coord
-                for (int i = Arrays.asList(arrColumns).indexOf(strStart.charAt(0)); i >= Arrays.asList(arrColumns).indexOf(strEnd.charAt(0)); i--) {
+                for (int i = Arrays.asList(COLUMN_INDEX).indexOf(strStart.charAt(0)); i >= Arrays.asList(COLUMN_INDEX).indexOf(strEnd.charAt(0)); i--) {
                     //add coordinates
-                    coordList.add(arrColumns[i] + String.valueOf(strStart.charAt(1)));
+                    coordList.add(COLUMN_INDEX[i] + String.valueOf(strStart.charAt(1)));
                 }
             }
         }
@@ -270,5 +271,25 @@ public class Grid {
         
         //return array of coords
         return arrCoords;
+    }
+    
+    //code a char[][] method to use the coordinate list to generate a 10 x 10 board with the ships in place
+    public char[][] initializeGrid() {
+        //declare and initialize a 10x10 grid to be populated
+        char[][] arrBoard = new char[10][10];
+        
+        //fill the grid with water '~'
+        for (int r = 0; r < arrBoard.length; r++) {
+            for (int c = 0; c < arrBoard[r].length; c++) {
+                //fill
+                arrBoard[r][c] = '~';
+            }
+        }
+        
+        
+        
+        
+        //return the grid
+        return arrBoard;
     }
 }
