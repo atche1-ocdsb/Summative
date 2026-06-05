@@ -193,6 +193,9 @@ public class Grid {
                 }
             }
             
+            //reset bytOptions
+            bytOptions = 0;
+            
             //check how many non zero end coords are left
             for (int j = 0; j < arrEndCoord.length; j++) {
                 if (!arrEndCoord[j].equals("0")) {
