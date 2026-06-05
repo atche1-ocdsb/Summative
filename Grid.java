@@ -134,21 +134,21 @@ public class Grid {
             arrEndCoord = new String[]{"0", "0", "0", "0"};
             
             //check how many of the four positions are possible to extend: up, right, down, left
-            if (bytRow - (bytSize + 1) >= 0) { //can extend up
+            if (bytRow - (bytSize - 1) >= 0) { //can extend up
                 //populate 1st slot of end coord array
-                arrEndCoord[0] = COLUMN_INDEX[bytCol] + String.valueOf(bytRow - (bytSize + 1));
+                arrEndCoord[0] = COLUMN_INDEX[bytCol] + String.valueOf(bytRow - (bytSize - 1));
             }
-            if (bytCol + (bytSize + 1) <= 9) { //can extend right
+            if (bytCol + (bytSize - 1) <= 9) { //can extend right
                 //populate 2nd slot of end coord array
-                arrEndCoord[1] = COLUMN_INDEX[bytCol + (bytSize + 1)] + String.valueOf(bytRow);
+                arrEndCoord[1] = COLUMN_INDEX[bytCol + (bytSize - 1)] + String.valueOf(bytRow);
             }
-            if (bytRow + (bytSize + 1) <= 9) { //can extend down
+            if (bytRow + (bytSize - 1) <= 9) { //can extend down
                 //populate 3rd slot of end coord array
-                arrEndCoord[2] = COLUMN_INDEX[bytCol] + String.valueOf(bytRow + (bytSize + 1));
+                arrEndCoord[2] = COLUMN_INDEX[bytCol] + String.valueOf(bytRow + (bytSize - 1));
             }
-            if (bytCol - (bytSize + 1) >= 0) { //can extend left
+            if (bytCol - (bytSize - 1) >= 0) { //can extend left
                 //populate 4th slot of end coord array
-                arrEndCoord[3] = COLUMN_INDEX[bytCol - (bytSize + 1)] + String.valueOf(bytRow);
+                arrEndCoord[3] = COLUMN_INDEX[bytCol - (bytSize - 1)] + String.valueOf(bytRow);
             }
             
             //for loop to loop through coord list and make sure it extands in a way to not overlap with other ships
