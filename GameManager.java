@@ -9,7 +9,8 @@
 public class GameManager {
     //code a void driver method to run the rest of the program
     public void run() {
-        
+        //test comp grid
+        Grid g1 = new Grid();
     }
     
     //code a void method that will handle all of the login steps

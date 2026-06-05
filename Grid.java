@@ -6,11 +6,11 @@
  * @version (June 2nd - June _)
  */
 import java.util.ArrayList; //import ArrayLists to be used to store the coords of the ships
-import java.util.Arrays;    //used to use indexOf method on normal arrays
 
 public class Grid {
     //declara a final global char array of the 10 letters representing the columns
     final char[] COLUMN_INDEX = new char[]{'A','B','C','D','E','F','G','H','I','J'};
+    
     //declare a private instance ArrayList to be initialized throught the parameterized constructor to store the user ship coords
     /* Ship order:
      *  Index 0 & 1 -> Carrier start & end
@@ -52,7 +52,7 @@ public class Grid {
         for (int r = 0; r < this.arrCompGrid.length; r++) {
             for (int c = 0; c < this.arrCompGrid.length; c++) {
                 //output
-                System.out.print(arrCompGrid[r][c]);
+                System.out.print(arrCompGrid[r][c] + " ");
             }
             System.out.println();
         }
@@ -153,18 +153,20 @@ public class Grid {
             
             //for loop to loop through coord list and make sure it extands in a way to not overlap with other ships
             //k currently loops through each ship individually
-            for (int k = 0; k < shipList.size(); k += 2) {    
+            for (int k = 0; k < shipList.size(); k += 2) {   
+                System.out.println("Comparing ship");
                 //populate all coords from comparing ship
                 otherList = allCoords(shipList.get(k), shipList.get(k+1));
                 
                 //for loop to check if each way of expanding works
-                for (int l = 1; l <= 4; l++) {
+                for (int l = 0; l <= 3; l++) {
                     //if statement to check if coord exist
                     if (arrEndCoord[l].equals("0")) {
                         //skip
                         continue;
                     }
                     else {
+                        System.out.println("Currnt ship");
                         //populate all current coords
                         currentList = allCoords(strCoord, arrEndCoord[l]);
                         
@@ -225,6 +227,21 @@ public class Grid {
         return shipList;
     }
     
+    //code a int method to get indexes in arrays
+    public int getIndexOf(char[] arrIndex, char chrTarget) {
+        //for loop to loop through the array
+        for (int i = 0; i < arrIndex.length; i++) {
+            //check if it is the target variable
+            if (arrIndex[i] == chrTarget) {
+                //return index
+                return i;
+            }
+        }
+        
+        //if not found return -1
+        return -1;
+    }
+    
     //code a ArrayList<String> method to return all of the coords of a ship given start and end
     public ArrayList<String> allCoords(String strStart, String strEnd) {
         //declare and initialize an ArrayList to store coords
@@ -233,9 +250,10 @@ public class Grid {
         //check if ship is vertical or horizontal
         if (strStart.charAt(1) == strEnd.charAt(1)) {   //horizontal
             //check which way it extends
-            if (Arrays.asList(COLUMN_INDEX).indexOf(strStart.charAt(0)) < Arrays.asList(COLUMN_INDEX).indexOf(strEnd.charAt(0))) { //extends right
+            if (getIndexOf(COLUMN_INDEX, strStart.charAt(0)) < getIndexOf(COLUMN_INDEX, strEnd.charAt(0))) { //extends right
                 //for loop to loop until end coord
-                for (int i = Arrays.asList(COLUMN_INDEX).indexOf(strStart.charAt(0)); i <= Arrays.asList(COLUMN_INDEX).indexOf(strEnd.charAt(0)); i++) {
+                for (int i = getIndexOf(COLUMN_INDEX, strStart.charAt(0)); i <= getIndexOf(COLUMN_INDEX, strEnd.charAt(0)); i++) {
+                    System.out.println(COLUMN_INDEX[i] + String.valueOf(strStart.charAt(1)));
                     //add coordinates
                     coordList.add(COLUMN_INDEX[i] + String.valueOf(strStart.charAt(1)));
                 }
@@ -243,7 +261,8 @@ public class Grid {
             }
             else { //extends left
                 //for loop to loop until end coord
-                for (int i = Arrays.asList(COLUMN_INDEX).indexOf(strStart.charAt(0)); i >= Arrays.asList(COLUMN_INDEX).indexOf(strEnd.charAt(0)); i--) {
+                for (int i = getIndexOf(COLUMN_INDEX, strStart.charAt(0)); i >= getIndexOf(COLUMN_INDEX, strEnd.charAt(0)); i--) {
+                    System.out.println(COLUMN_INDEX[i] + String.valueOf(strStart.charAt(1)));
                     //add coordinates
                     coordList.add(COLUMN_INDEX[i] + String.valueOf(strStart.charAt(1)));
                 }
@@ -254,13 +273,15 @@ public class Grid {
             if (Character.getNumericValue(strStart.charAt(1)) < Character.getNumericValue(strEnd.charAt(1))) { //down
                 //for loop to loop until end coord
                 for (int i = Character.getNumericValue(strStart.charAt(1)); i <= Character.getNumericValue(strEnd.charAt(1)); i++) {
+                    System.out.println(strStart.charAt(0) + String.valueOf(i));
                     //add coordinates
                     coordList.add(strStart.charAt(0) + String.valueOf(i));
                 }
             }
             else { //up
                 //for loop to loop until end coord
-                for (int i = Character.getNumericValue(strStart.charAt(1)); i >= Character.getNumericValue(strEnd.charAt(1)); i++) {
+                for (int i = Character.getNumericValue(strStart.charAt(1)); i >= Character.getNumericValue(strEnd.charAt(1)); i--) {
+                    System.out.println(strStart.charAt(0) + String.valueOf(i));
                     //add coordinates
                     coordList.add(strStart.charAt(0) + String.valueOf(i));
                 }
@@ -289,6 +310,7 @@ public class Grid {
         
         //for loop to loop through each ship
         for (int i = 0; i < this.coordsList.size(); i += 2) {
+            System.out.println("Initialize ships");
             //populate all coords from ship
             currentList = allCoords(this.coordsList.get(i), this.coordsList.get(i+1));
             
@@ -297,23 +319,23 @@ public class Grid {
                 //if statement to check what type of ship it is
                 if (i == 0) {   //Carrier
                     //rewrite 'C' for all coords
-                    arrBoard[Character.getNumericValue(currentList.get(j).charAt(1))][COLUMN_INDEX[currentList.get(j).charAt(0)]] = 'C';
+                    arrBoard[Character.getNumericValue(currentList.get(j).charAt(1))][getIndexOf(COLUMN_INDEX, currentList.get(j).charAt(0))] = 'C';
                 }
                 else if (i == 2) {  //Battleship
                     //rewrite 'B' for all coords
-                    arrBoard[Character.getNumericValue(currentList.get(j).charAt(1))][COLUMN_INDEX[currentList.get(j).charAt(0)]] = 'B';
+                    arrBoard[Character.getNumericValue(currentList.get(j).charAt(1))][getIndexOf(COLUMN_INDEX, currentList.get(j).charAt(0))] = 'B';
                 }
                 else if (i == 4) {  //Destroyer
                     //rewrite 'D' for all coords
-                    arrBoard[Character.getNumericValue(currentList.get(j).charAt(1))][COLUMN_INDEX[currentList.get(j).charAt(0)]] = 'D';
+                    arrBoard[Character.getNumericValue(currentList.get(j).charAt(1))][getIndexOf(COLUMN_INDEX, currentList.get(j).charAt(0))] = 'D';
                 }
                 else if (i == 6) {  //Submarine
                     //rewrite 'S' for all coords
-                    arrBoard[Character.getNumericValue(currentList.get(j).charAt(1))][COLUMN_INDEX[currentList.get(j).charAt(0)]] = 'S';
+                    arrBoard[Character.getNumericValue(currentList.get(j).charAt(1))][getIndexOf(COLUMN_INDEX, currentList.get(j).charAt(0))] = 'S';
                 }
                 else if (i == 8) {  //Patrolboat
                     //rewrite 'P' for all coords
-                    arrBoard[Character.getNumericValue(currentList.get(j).charAt(1))][COLUMN_INDEX[currentList.get(j).charAt(0)]] = 'P';
+                    arrBoard[Character.getNumericValue(currentList.get(j).charAt(1))][getIndexOf(COLUMN_INDEX, currentList.get(j).charAt(0))] = 'P';
                 }
             }
         }
