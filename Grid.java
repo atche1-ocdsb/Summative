@@ -3,7 +3,7 @@
  * When creating the grid, this class will create instances of the 5 ships and “position” them on the grid.
  *
  * @author (Artem Tchernov)
- * @version (June 2nd - June _)
+ * @version (June 2nd - June 10th)
  */
 import java.util.ArrayList; //import ArrayLists to be used to store the coords of the ships
 
@@ -36,6 +36,13 @@ public class Grid {
         //initialize coords ArrayList
         this.coordsList = c;
         
+        //create instances of all 5 ships
+        Ship userCarrier = new Carrier(allCoords(this.coordsList.get(0), this.coordsList.get(1)));
+        Ship userBattleship = new Battleship(allCoords(this.coordsList.get(2), this.coordsList.get(3)));
+        Ship userDestroyer = new Destroyer(allCoords(this.coordsList.get(4), this.coordsList.get(5)));
+        Ship userSubmarine = new Submarine(allCoords(this.coordsList.get(6), this.coordsList.get(7)));
+        Ship userPatrolboat = new Patrolboat(allCoords(this.coordsList.get(8), this.coordsList.get(9)));
+        
         //using the given coordinates, populate the arrGrid
         this.arrUserGrid = initializeGrid();
     }
@@ -44,6 +51,13 @@ public class Grid {
     Grid() {
         //initialize the coords ArrayList using random generated ships positions
         this.coordsList = generateShips();
+        
+        //create instances of all 5 ships
+        Ship compCarrier = new Carrier(allCoords(this.coordsList.get(0), this.coordsList.get(1)));
+        Ship compBattleship = new Battleship(allCoords(this.coordsList.get(2), this.coordsList.get(3)));
+        Ship compDestroyer = new Destroyer(allCoords(this.coordsList.get(4), this.coordsList.get(5)));
+        Ship compSubmarine = new Submarine(allCoords(this.coordsList.get(6), this.coordsList.get(7)));
+        Ship compPatrolboat = new Patrolboat(allCoords(this.coordsList.get(8), this.coordsList.get(9)));
         
         //using the given coordinates, populate the arrGrid
         this.arrCompGrid = initializeGrid();
@@ -154,7 +168,6 @@ public class Grid {
             //for loop to loop through coord list and make sure it extands in a way to not overlap with other ships
             //k currently loops through each ship individually
             for (int k = 0; k < shipList.size(); k += 2) {   
-                System.out.println("Comparing ship");
                 //populate all coords from comparing ship
                 otherList = allCoords(shipList.get(k), shipList.get(k+1));
                 
@@ -166,7 +179,6 @@ public class Grid {
                         continue;
                     }
                     else {
-                        System.out.println("Currnt ship");
                         //populate all current coords
                         currentList = allCoords(strCoord, arrEndCoord[l]);
                         
@@ -256,7 +268,6 @@ public class Grid {
             if (getIndexOf(COLUMN_INDEX, strStart.charAt(0)) < getIndexOf(COLUMN_INDEX, strEnd.charAt(0))) { //extends right
                 //for loop to loop until end coord
                 for (int i = getIndexOf(COLUMN_INDEX, strStart.charAt(0)); i <= getIndexOf(COLUMN_INDEX, strEnd.charAt(0)); i++) {
-                    System.out.println(COLUMN_INDEX[i] + String.valueOf(strStart.charAt(1)));
                     //add coordinates
                     coordList.add(COLUMN_INDEX[i] + String.valueOf(strStart.charAt(1)));
                 }
@@ -265,7 +276,6 @@ public class Grid {
             else { //extends left
                 //for loop to loop until end coord
                 for (int i = getIndexOf(COLUMN_INDEX, strStart.charAt(0)); i >= getIndexOf(COLUMN_INDEX, strEnd.charAt(0)); i--) {
-                    System.out.println(COLUMN_INDEX[i] + String.valueOf(strStart.charAt(1)));
                     //add coordinates
                     coordList.add(COLUMN_INDEX[i] + String.valueOf(strStart.charAt(1)));
                 }
@@ -276,7 +286,6 @@ public class Grid {
             if (Character.getNumericValue(strStart.charAt(1)) < Character.getNumericValue(strEnd.charAt(1))) { //down
                 //for loop to loop until end coord
                 for (int i = Character.getNumericValue(strStart.charAt(1)); i <= Character.getNumericValue(strEnd.charAt(1)); i++) {
-                    System.out.println(strStart.charAt(0) + String.valueOf(i));
                     //add coordinates
                     coordList.add(strStart.charAt(0) + String.valueOf(i));
                 }
@@ -284,7 +293,6 @@ public class Grid {
             else { //up
                 //for loop to loop until end coord
                 for (int i = Character.getNumericValue(strStart.charAt(1)); i >= Character.getNumericValue(strEnd.charAt(1)); i--) {
-                    System.out.println(strStart.charAt(0) + String.valueOf(i));
                     //add coordinates
                     coordList.add(strStart.charAt(0) + String.valueOf(i));
                 }
@@ -313,7 +321,6 @@ public class Grid {
         
         //for loop to loop through each ship
         for (int i = 0; i < this.coordsList.size(); i += 2) {
-            System.out.println("Initialize ships");
             //populate all coords from ship
             currentList = allCoords(this.coordsList.get(i), this.coordsList.get(i+1));
             
