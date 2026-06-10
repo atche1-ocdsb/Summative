@@ -28,7 +28,7 @@ public class GameManager {
         gridList = createBoards();
         
         //start the user's turn with score of 0 and an empty hit array and populate the final score to the byte variable
-        bytScore = turn(new ArrayList<String>(), gridList.get(0), gridList.get(1), (byte)0);
+        bytScore = turn(new ArrayList<String>(), new ArrayList<String>(), gridList.get(0), gridList.get(1), (byte)0);
     }
     
     //code a void method to output the instructions
@@ -560,19 +560,194 @@ public class GameManager {
     }
     
     //code a recursive byte turn method that will manage what happens each turn
-    public byte turn(ArrayList<String> hitsList, Grid gridComp, Grid gridUser, byte bytScore) {
-        //base case 1:
-        if (gridUser.getUserCarrier().isDestroyed(hitsList, gridUser.getUserCarrier().getCoordList())
-            && gridUser.getUserBattleship().isDestroyed(hitsList, gridUser.getUserBattleship().getCoordList())
-            && gridUser.getUserDestroyer().isDestroyed(hitsList, gridUser.getUserDestroyer().getCoordList())
-            && gridUser.getUserSubmarine().isDestroyed(hitsList, gridUser.getUserSubmarine().getCoordList())
-            && gridUser.getUserPatrolboat().isDestroyed(hitsList, gridUser.getUserPatrolboat().getCoordList())
-            ) {
-            //user lost, return score of -1
-            return -1;
+    public byte turn(ArrayList<String> compHitsList, ArrayList<String> hitsList, Grid gridComp, Grid gridUser, byte bytScore) {
+        //create a Scanner
+        Scanner sc = new Scanner(System.in);
+        
+        //create an arrCompGrid and arrUserGrid for output
+        char[][] arrCompGrid = gridComp.getCompGrid();
+        char[][] arrUserGrid = gridUser.getUserGrid();
+        char[][] arrDisplayGrid = new char[10][10];
+        
+        //create an instance of the ship class to use its toString
+        Ship s1 = new Ship();
+        
+        //declare a String to store current shot
+        String strShot;
+        
+        //declare two bytes to store row index and col index
+        byte bytRow;
+        byte bytCol;
+        
+        //declare a boolean for error checking
+        boolean bolLoop = false;
+        
+        //only run the first time
+        if (bytScore == 0) {
+            //output the two grids to the user
+            System.out.println("\n\n\n      Your grid:                Computer grid: ");
+            
+            //output grid
+            System.out.println("  A B C D E F G H I J " + "        A B C D E F G H I J ");
+            for (int r = 0; r < gridUser.initializeGrid().length; r++) {
+                System.out.print(r + " ");
+                for (int c = 0; c < gridUser.initializeGrid()[r].length; c++) {
+                    //output
+                    System.out.print(gridUser.initializeGrid()[r][c] + " ");
+                }
+                System.out.print("      " + r + " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ");
+                System.out.println();
+            }
         }
         
-        //base case 2:
+        //prompt the user to shoot
+        System.out.println("\nYour turn -> To shoot, enter a coordinate on the opponents board: ");
+        
+        //do/while loop to get a valid shot
+        do {
+            //populate the shot
+            strShot = sc.nextLine();
+            
+            //check if its a real coordinate
+            if (strShot.length() == 2) {
+                //check if first character is appropriate
+                switch(strShot.charAt(0)) {
+                    //is fine so dont loop
+                    case 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' -> bolLoop = false;
+                    default -> {
+                        bolLoop = true;
+                        
+                        //error msg
+                        System.out.println("Error! First character must be a capital letter A - J. Try again: ");
+                    } 
+                }
+                
+                //if 1st is fine check 2nd
+                if (!bolLoop) {
+                    //check if 2nd character is appropriate
+                    switch(strShot.charAt(1)) {
+                        //is fine font loop
+                        case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> bolLoop = false;
+                        default -> {
+                            bolLoop = true;
+                            
+                            //error msg
+                            System.out.println("Error! Second character must be a number ranging 0 - 9. Try again: ");
+                        } 
+                    }
+                }
+            }
+            else {
+                //loop 
+                bolLoop = true;
+                
+                //error msg
+                System.out.println("Error! Coordinate must be formated as a capital letter followed by a number (ex. A1). Try again: ");
+            }
+            
+            //check if this shot has already been taken
+            for (int i = 0; i < hitsList.size(); i++) {
+                if (strShot.equals(hitsList.get(i))) {
+                    //loop also
+                    bolLoop = true;
+                    
+                    //error msg
+                    System.out.println("Error! This shot has already been taken. Try again: ");
+                }
+            }
+        }
+        while (bolLoop);
+        
+        //add the shot to the hits list
+        hitsList.add(strShot);
+        
+        //update the comp board
+        arrCompGrid = gridComp.updateCompBoard(strShot);
+        
+        //shallow copy into the display grid
+        for (int r = 0; r < arrCompGrid.length; r++) {
+            for (int c = 0; c < arrCompGrid[r].length; c++) {
+                //copy
+                arrDisplayGrid[r][c] = arrCompGrid[r][c];
+            }
+        }
+        
+        //hide the ships on the display board
+        for (int r = 0; r < arrDisplayGrid.length; r++) {
+            for (int c = 0; c < arrDisplayGrid[r].length; c++) {
+                //hide all letters
+                switch (arrDisplayGrid[r][c]) {
+                    case 'C','B','D','S','P' -> arrDisplayGrid[r][c] = '~';
+                }
+            }
+        }
+        
+        //output the two grids to the user
+        System.out.println("\n\n\n      Your grid:                Computer grid: ");
+        
+        //output grid
+        System.out.println("  A B C D E F G H I J " + "        A B C D E F G H I J ");
+        for (int r = 0; r < arrUserGrid.length; r++) {
+            System.out.print(r + " ");
+            for (int c = 0; c < arrUserGrid[r].length; c++) {
+                //output
+                System.out.print(arrUserGrid[r][c] + " ");
+            }
+            System.out.print("      " + r + " ");
+            for (int c = 0; c < arrDisplayGrid[r].length; c++) {
+                //output
+                System.out.print(arrDisplayGrid[r][c] + " ");
+            }
+            System.out.println();
+        }
+        
+        //check if the shot has hit a ship
+        if (gridComp.getCompCarrier().isHit(strShot, gridComp.getCompCarrier().getCoordList()) && !gridComp.getCompCarrier().isDestroyed(hitsList, gridComp.getCompCarrier().getCoordList())) {
+            //output a msg using the toString
+            System.out.println(s1.toString());
+        }
+        else if (gridComp.getCompCarrier().isDestroyed(hitsList, gridComp.getCompCarrier().getCoordList())) {
+            //output destroyed msg using toString
+            System.out.println(gridComp.getCompCarrier().toString());
+        }
+        else if (gridComp.getCompBattleship().isHit(strShot, gridComp.getCompBattleship().getCoordList()) && !gridComp.getCompBattleship().isDestroyed(hitsList, gridComp.getCompBattleship().getCoordList())) {
+            //output a msg using the toString
+            System.out.println(s1.toString());
+        }
+        else if (gridComp.getCompBattleship().isDestroyed(hitsList, gridComp.getCompBattleship().getCoordList())) {
+            //output destroyed msg using toString
+            System.out.println(gridComp.getCompBattleship().toString());
+        }
+        else if (gridComp.getCompDestroyer().isHit(strShot, gridComp.getCompDestroyer().getCoordList()) && !gridComp.getCompDestroyer().isDestroyed(hitsList, gridComp.getCompDestroyer().getCoordList())) {
+            //output a msg using the toString
+            System.out.println(s1.toString());
+        }
+        else if (gridComp.getCompDestroyer().isDestroyed(hitsList, gridComp.getCompDestroyer().getCoordList())) {
+            //output destroyed msg using toString
+            System.out.println(gridComp.getCompDestroyer().toString());
+        }
+        else if (gridComp.getCompSubmarine().isHit(strShot, gridComp.getCompSubmarine().getCoordList()) && !gridComp.getCompSubmarine().isDestroyed(hitsList, gridComp.getCompSubmarine().getCoordList())) {
+            //output a msg using the toString
+            System.out.println(s1.toString());
+        }
+        else if (gridComp.getCompSubmarine().isDestroyed(hitsList, gridComp.getCompSubmarine().getCoordList())) {
+            //output destroyed msg using toString
+            System.out.println(gridComp.getCompSubmarine().toString());
+        }
+        else if (gridComp.getCompPatrolboat().isHit(strShot, gridComp.getCompPatrolboat().getCoordList()) && !gridComp.getCompPatrolboat().isDestroyed(hitsList, gridComp.getCompPatrolboat().getCoordList())) {
+            //output a msg using the toString
+            System.out.println(s1.toString());
+        }
+        else if (gridComp.getCompPatrolboat().isDestroyed(hitsList, gridComp.getCompPatrolboat().getCoordList())) {
+            //output destroyed msg using toString
+            System.out.println(gridComp.getCompPatrolboat().toString());
+        }
+        else {
+            //output miss message
+            System.out.println("\nYou missed your shot!");
+        }
+        
+        //base case 1:
         if (gridComp.getCompCarrier().isDestroyed(hitsList, gridComp.getCompCarrier().getCoordList())
             && gridComp.getCompBattleship().isDestroyed(hitsList, gridComp.getCompBattleship().getCoordList())
             && gridComp.getCompDestroyer().isDestroyed(hitsList, gridComp.getCompDestroyer().getCoordList())
@@ -583,9 +758,115 @@ public class GameManager {
             return bytScore;
         }
         
-        //output the two grids to the user
-        System.out.println();
+        //computer's turn -> randomized coordinate
+        //do/while loop to ensure the hit generated isnt a repeat
+        do {
+            //dont initialy regenerate/loop
+            bolLoop = false;
+            
+            //generate random coords
+            bytRow = (byte)(Math.random() * 10);
+            bytCol = (byte)(Math.random() * 10);
+            
+            //find the column letter using ASCII codes and add it to the string, followed by row number
+            strShot = (char)(bytCol + 65) + String.valueOf(bytRow);
+            
+            //check if this coordinate is already in the list, if so regenerate
+            for (int i = 0; i < compHitsList.size(); i++) {
+                if (compHitsList.get(i).equals(strShot)) {
+                    //regenerate
+                    bolLoop = true;
+                }
+            }
+        }
+        while (bolLoop); 
         
-        return 0;
+        //add the shot to the list
+        compHitsList.add(strShot);
+        
+        //output computer shot
+        System.out.println("\nYour opponent shoots at " + strShot);
+        
+        //update the user board
+        arrUserGrid = gridUser.updateUserBoard(strShot);
+        
+        //output the two grids to the user
+        System.out.println("\n\n\n      Your grid:                Computer grid: ");
+        
+        //output grid
+        System.out.println("  A B C D E F G H I J " + "        A B C D E F G H I J ");
+        for (int r = 0; r < arrUserGrid.length; r++) {
+            System.out.print(r + " ");
+            for (int c = 0; c < arrUserGrid[r].length; c++) {
+                //output
+                System.out.print(arrUserGrid[r][c] + " ");
+            }
+            System.out.print("      " + r + " ");
+            for (int c = 0; c < arrDisplayGrid[r].length; c++) {
+                //output
+                System.out.print(arrDisplayGrid[r][c] + " ");
+            }
+            System.out.println();
+        }
+        
+        //check if the shot has hit a ship
+        if (gridUser.getUserCarrier().isHit(strShot, gridUser.getUserCarrier().getCoordList()) && !gridUser.getUserCarrier().isDestroyed(compHitsList, gridUser.getUserCarrier().getCoordList())) {
+            //output a msg using the toString
+            System.out.println(s1.toString());
+        }
+        else if (gridUser.getUserCarrier().isDestroyed(compHitsList, gridUser.getUserCarrier().getCoordList())) {
+            //output destroyed msg using toString
+            System.out.println(gridUser.getUserCarrier().toString());
+        }
+        else if (gridUser.getUserBattleship().isHit(strShot, gridUser.getUserBattleship().getCoordList()) && !gridUser.getUserBattleship().isDestroyed(compHitsList, gridUser.getUserBattleship().getCoordList())) {
+            //output a msg using the toString
+            System.out.println(s1.toString());
+        }
+        else if (gridUser.getUserBattleship().isDestroyed(compHitsList, gridUser.getUserBattleship().getCoordList())) {
+            //output destroyed msg using toString
+            System.out.println(gridUser.getUserBattleship().toString());
+        }
+        else if (gridUser.getUserDestroyer().isHit(strShot, gridUser.getUserDestroyer().getCoordList()) && !gridUser.getUserDestroyer().isDestroyed(compHitsList, gridUser.getUserDestroyer().getCoordList())) {
+            //output a msg using the toString
+            System.out.println(s1.toString());
+        }
+        else if (gridUser.getUserDestroyer().isDestroyed(compHitsList, gridUser.getUserDestroyer().getCoordList())) {
+            //output destroyed msg using toString
+            System.out.println(gridUser.getUserDestroyer().toString());
+        }
+        else if (gridUser.getUserSubmarine().isHit(strShot, gridUser.getUserSubmarine().getCoordList()) && !gridUser.getUserSubmarine().isDestroyed(compHitsList, gridUser.getUserSubmarine().getCoordList())) {
+            //output a msg using the toString
+            System.out.println(s1.toString());
+        }
+        else if (gridUser.getUserSubmarine().isDestroyed(compHitsList, gridUser.getUserSubmarine().getCoordList())) {
+            //output destroyed msg using toString
+            System.out.println(gridUser.getUserSubmarine().toString());
+        }
+        else if (gridUser.getUserPatrolboat().isHit(strShot, gridUser.getUserPatrolboat().getCoordList()) && !gridUser.getUserPatrolboat().isDestroyed(compHitsList, gridUser.getUserPatrolboat().getCoordList())) {
+            //output a msg using the toString
+            System.out.println(s1.toString());
+        }
+        else if (gridUser.getUserPatrolboat().isDestroyed(compHitsList, gridUser.getUserPatrolboat().getCoordList())) {
+            //output destroyed msg using toString
+            System.out.println(gridUser.getUserPatrolboat().toString());
+        }
+        else {
+            //output miss message
+            System.out.println("\nYour opponent missed their shot!");
+        }
+        
+        //base case 2:
+        if (gridUser.getUserCarrier().isDestroyed(compHitsList, gridUser.getUserCarrier().getCoordList())
+            && gridUser.getUserBattleship().isDestroyed(compHitsList, gridUser.getUserBattleship().getCoordList())
+            && gridUser.getUserDestroyer().isDestroyed(compHitsList, gridUser.getUserDestroyer().getCoordList())
+            && gridUser.getUserSubmarine().isDestroyed(compHitsList, gridUser.getUserSubmarine().getCoordList())
+            && gridUser.getUserPatrolboat().isDestroyed(compHitsList, gridUser.getUserPatrolboat().getCoordList())
+            ) {
+            //user lost, return score of -1
+            return -1;
+        }
+        
+        //since neither player won on this turn, proceed to next turn
+        return turn(compHitsList, hitsList, gridComp, gridUser, bytScore += 1);
     }
 }

@@ -13,4 +13,10 @@ public class Battleship extends Ship{
         //initialize the coordlist through the superclass
         super(a);
     }
+    
+    //code a toString to be used when the ship is destroyed
+    @Override
+    public String toString() {
+        return super.toString() + " The Battleship has been sunk.";
+    }
 }

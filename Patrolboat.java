@@ -13,4 +13,10 @@ public class Patrolboat extends Ship{
         //initialize the coordlist through the superclass
         super(a);
     }
+    
+    //code a toString to be used when the ship is destroyed
+    @Override
+    public String toString() {
+        return super.toString() + " The Patrolbaot has been sunk.";
+    }
 }

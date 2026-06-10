@@ -56,15 +56,6 @@ public class Grid {
         
         //using the given coordinates, populate the arrGrid
         this.arrUserGrid = initializeGrid();
-        
-        //output the grid
-        for (int r = 0; r < this.arrUserGrid.length; r++) {
-            for (int d = 0; d < this.arrUserGrid.length; d++) {
-                //output
-                System.out.print(arrUserGrid[r][d] + " ");
-            }
-            System.out.println();
-        }
     }
     
     //code a default constructor to be called when creating the computer's board and used to randomize the ship coords
@@ -81,16 +72,11 @@ public class Grid {
         
         //using the given coordinates, populate the arrGrid
         this.arrCompGrid = initializeGrid();
-        
-        //output the grid
-        for (int r = 0; r < this.arrCompGrid.length; r++) {
-            for (int c = 0; c < this.arrCompGrid.length; c++) {
-                //output
-                System.out.print(arrCompGrid[r][c] + " ");
-            }
-            System.out.println();
-        }
     }
+    
+    //code getters for the two char[][] arrays
+    public char[][] getUserGrid() { return this.arrUserGrid; }
+    public char[][] getCompGrid() { return this.arrCompGrid; }
     
     //code getters for all 10 ships
     public Ship getUserCarrier() { return this.userCarrier; }
@@ -384,5 +370,29 @@ public class Grid {
         
         //return the grid
         return arrBoard;
+    }
+    
+    //code a char[][] method that will update a board upon being shot at
+    public char[][] updateCompBoard(String strShot) {
+        //check the board
+        switch (this.arrCompGrid[Character.getNumericValue(strShot.charAt(1))][strShot.charAt(0) - 65]) {
+            case 'C','B','D','S','P' -> this.arrCompGrid[Character.getNumericValue(strShot.charAt(1))][strShot.charAt(0) - 65] = '*';
+            default -> this.arrCompGrid[Character.getNumericValue(strShot.charAt(1))][strShot.charAt(0) - 65] = 'o';
+        }
+        
+        //return the board
+        return this.arrCompGrid;
+    }
+    
+    //code a char[][] method that will update a board upon being shot at
+    public char[][] updateUserBoard(String strShot) {
+        //check the board
+        switch (this.arrUserGrid[Character.getNumericValue(strShot.charAt(1))][strShot.charAt(0) - 65]) {
+            case 'C','B','D','S','P' -> this.arrUserGrid[Character.getNumericValue(strShot.charAt(1))][strShot.charAt(0) - 65] = '*';
+            default -> this.arrUserGrid[Character.getNumericValue(strShot.charAt(1))][strShot.charAt(0) - 65] = 'o';
+        }
+        
+        //return the board
+        return this.arrUserGrid;
     }
 }

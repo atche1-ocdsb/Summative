@@ -16,6 +16,11 @@ public class Ship {
         //initialize instance variable
         this.allCoordsList = a;
     }
+    
+    //code an empty default constructor so the class instance can be used for its methods
+    Ship() {
+        
+    }
         
     //code a getter for the coordlist
     public ArrayList<String> getCoordList() {
@@ -71,5 +76,10 @@ public class Ship {
         
         //since all indexes are true, the ship is destroyed, return true
         return true;
+    }
+    
+    //code a toString to be used when a ship is used, it is shared as to not reveal which ship is hit
+    public String toString() {
+        return "Hit!";
     }
 }
