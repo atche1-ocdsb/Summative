@@ -1,4 +1,3 @@
-Artem,Yes,99
-Martin,Liu,0
-Nathaniel,B,0
-Adam,No,0
+Artem,Yes,65
+Dave,123,100
+Martin,Liu,127

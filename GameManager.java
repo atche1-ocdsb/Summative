@@ -161,7 +161,7 @@ public class GameManager {
                         
                         //check if usernames match
                         if (arrData[0].equals(strName)) {
-                            //has benn found
+                            //has been found
                             bolFound = true;
                             
                             //check option
@@ -175,7 +175,7 @@ public class GameManager {
                         }
                         else {
                             //check option
-                            if (intInput == 1 && !bolFound) {
+                            if (intInput == 1 && !bolFound && !bolLoop) {
                                 //error msg
                                 System.out.println("Error! Username not found. Try again: ");
                                 
@@ -496,9 +496,9 @@ public class GameManager {
                         //error msg
                         System.out.println("Error! End coordinate must not match the starting coordinate. Try again: ");
                     }
-                    else {
+                    else if (!bolLoop) {
                         //make sure they share at least row or column
-                        if (currentList.get(0).charAt(0) != currentList.get(1).charAt(0) && currentList.get(0).charAt(1) != currentList.get(1).charAt(1) && !bolLoop) {
+                        if (currentList.get(0).charAt(0) != currentList.get(1).charAt(0) && currentList.get(0).charAt(1) != currentList.get(1).charAt(1)) {
                             //loop also
                             bolLoop = true;
                             
@@ -732,40 +732,55 @@ public class GameManager {
             System.out.println(s1.toString());
         }
         else if (gridComp.getCompCarrier().isDestroyed(hitsList, gridComp.getCompCarrier().getCoordList())) {
-            //output destroyed msg using toString
-            System.out.println(gridComp.getCompCarrier().toString());
+            //only run once
+            if (strShot.equals(hitsList.get(hitsList.size() - 1))) {
+                //output destroyed msg using toString
+                System.out.println(gridComp.getCompCarrier().toString());
+            }
         }
         else if (gridComp.getCompBattleship().isHit(strShot, gridComp.getCompBattleship().getCoordList()) && !gridComp.getCompBattleship().isDestroyed(hitsList, gridComp.getCompBattleship().getCoordList())) {
             //output a msg using the toString
             System.out.println(s1.toString());
         }
         else if (gridComp.getCompBattleship().isDestroyed(hitsList, gridComp.getCompBattleship().getCoordList())) {
-            //output destroyed msg using toString
-            System.out.println(gridComp.getCompBattleship().toString());
+            //only run once
+            if (strShot.equals(hitsList.get(hitsList.size() - 1))) {
+                //output destroyed msg using toString
+                System.out.println(gridComp.getCompBattleship().toString());
+            }
         }
         else if (gridComp.getCompDestroyer().isHit(strShot, gridComp.getCompDestroyer().getCoordList()) && !gridComp.getCompDestroyer().isDestroyed(hitsList, gridComp.getCompDestroyer().getCoordList())) {
             //output a msg using the toString
             System.out.println(s1.toString());
         }
         else if (gridComp.getCompDestroyer().isDestroyed(hitsList, gridComp.getCompDestroyer().getCoordList())) {
-            //output destroyed msg using toString
-            System.out.println(gridComp.getCompDestroyer().toString());
+            //only run once
+            if (strShot.equals(hitsList.get(hitsList.size() - 1))) {
+                //output destroyed msg using toString
+                System.out.println(gridComp.getCompDestroyer().toString());
+            }
         }
         else if (gridComp.getCompSubmarine().isHit(strShot, gridComp.getCompSubmarine().getCoordList()) && !gridComp.getCompSubmarine().isDestroyed(hitsList, gridComp.getCompSubmarine().getCoordList())) {
             //output a msg using the toString
             System.out.println(s1.toString());
         }
         else if (gridComp.getCompSubmarine().isDestroyed(hitsList, gridComp.getCompSubmarine().getCoordList())) {
-            //output destroyed msg using toString
-            System.out.println(gridComp.getCompSubmarine().toString());
+            //only run once
+            if (strShot.equals(hitsList.get(hitsList.size() - 1))) {
+                //output destroyed msg using toString
+                System.out.println(gridComp.getCompSubmarine().toString());
+            }
         }
         else if (gridComp.getCompPatrolboat().isHit(strShot, gridComp.getCompPatrolboat().getCoordList()) && !gridComp.getCompPatrolboat().isDestroyed(hitsList, gridComp.getCompPatrolboat().getCoordList())) {
             //output a msg using the toString
             System.out.println(s1.toString());
         }
         else if (gridComp.getCompPatrolboat().isDestroyed(hitsList, gridComp.getCompPatrolboat().getCoordList())) {
-            //output destroyed msg using toString
-            System.out.println(gridComp.getCompPatrolboat().toString());
+            //only run once
+            if (strShot.equals(hitsList.get(hitsList.size() - 1))) {
+                //output destroyed msg using toString
+                System.out.println(gridComp.getCompPatrolboat().toString());
+            }
         }
         else {
             //output miss message
@@ -840,40 +855,55 @@ public class GameManager {
             System.out.println(s1.toString());
         }
         else if (gridUser.getUserCarrier().isDestroyed(compHitsList, gridUser.getUserCarrier().getCoordList())) {
-            //output destroyed msg using toString
-            System.out.println(gridUser.getUserCarrier().toString());
+            //only run once
+            if (strShot.equals(compHitsList.get(compHitsList.size() - 1))) {
+                //output destroyed msg using toString
+                System.out.println(gridUser.getUserCarrier().toString());
+            }
         }
         else if (gridUser.getUserBattleship().isHit(strShot, gridUser.getUserBattleship().getCoordList()) && !gridUser.getUserBattleship().isDestroyed(compHitsList, gridUser.getUserBattleship().getCoordList())) {
             //output a msg using the toString
             System.out.println(s1.toString());
         }
         else if (gridUser.getUserBattleship().isDestroyed(compHitsList, gridUser.getUserBattleship().getCoordList())) {
-            //output destroyed msg using toString
-            System.out.println(gridUser.getUserBattleship().toString());
+            //only run once
+            if (strShot.equals(compHitsList.get(compHitsList.size() - 1))) {
+                //output destroyed msg using toString
+                System.out.println(gridUser.getUserBattleship().toString());
+            }
         }
         else if (gridUser.getUserDestroyer().isHit(strShot, gridUser.getUserDestroyer().getCoordList()) && !gridUser.getUserDestroyer().isDestroyed(compHitsList, gridUser.getUserDestroyer().getCoordList())) {
             //output a msg using the toString
             System.out.println(s1.toString());
         }
         else if (gridUser.getUserDestroyer().isDestroyed(compHitsList, gridUser.getUserDestroyer().getCoordList())) {
-            //output destroyed msg using toString
-            System.out.println(gridUser.getUserDestroyer().toString());
+            //only run once
+            if (strShot.equals(compHitsList.get(compHitsList.size() - 1))) {
+                //output destroyed msg using toString
+                System.out.println(gridUser.getUserDestroyer().toString());
+            }
         }
         else if (gridUser.getUserSubmarine().isHit(strShot, gridUser.getUserSubmarine().getCoordList()) && !gridUser.getUserSubmarine().isDestroyed(compHitsList, gridUser.getUserSubmarine().getCoordList())) {
             //output a msg using the toString
             System.out.println(s1.toString());
         }
         else if (gridUser.getUserSubmarine().isDestroyed(compHitsList, gridUser.getUserSubmarine().getCoordList())) {
-            //output destroyed msg using toString
-            System.out.println(gridUser.getUserSubmarine().toString());
+            //only run once
+            if (strShot.equals(compHitsList.get(compHitsList.size() - 1))) {
+                //output destroyed msg using toString
+                System.out.println(gridUser.getUserSubmarine().toString());
+            }
         }
         else if (gridUser.getUserPatrolboat().isHit(strShot, gridUser.getUserPatrolboat().getCoordList()) && !gridUser.getUserPatrolboat().isDestroyed(compHitsList, gridUser.getUserPatrolboat().getCoordList())) {
             //output a msg using the toString
             System.out.println(s1.toString());
         }
         else if (gridUser.getUserPatrolboat().isDestroyed(compHitsList, gridUser.getUserPatrolboat().getCoordList())) {
-            //output destroyed msg using toString
-            System.out.println(gridUser.getUserPatrolboat().toString());
+            //only run once
+            if (strShot.equals(compHitsList.get(compHitsList.size() - 1))) {
+                //output destroyed msg using toString
+                System.out.println(gridUser.getUserPatrolboat().toString());
+            }
         }
         else {
             //output miss message
@@ -925,16 +955,14 @@ public class GameManager {
                 //check if usernames match
                 if (arrData[0].equals(p1.getName())) {
                     //compare scores
-                    if (!arrData[3].equals("0")) {
-                        if (Byte.parseByte(arrData[3]) > bytScore) {
+                    if (!arrData[2].equals("0")) {
+                        if (Byte.parseByte(arrData[2]) > bytScore) {
                             //new highscore
                             bolHS = true;
                         }
                     }
-                }
-                    
+                }  
             }
-            
             //close reader
             reader.close();
             
@@ -955,14 +983,14 @@ public class GameManager {
                 arrLeaderboard[i][1] = linesList.get(i)[1];
                 
                 //check for current player
-                if (linesList.get(i)[0].equals(p1.getName())) {
-                    arrLeaderboard[i][2] = linesList.get(i)[bytScore];
+                if (linesList.get(i)[0].equals(p1.getName()) && bolHS) {
+                    arrLeaderboard[i][2] = String.valueOf(bytScore);
                 }
                 else {
                     arrLeaderboard[i][2] = linesList.get(i)[2];
                 }
             }
-            
+
             //selection sort through array based off of score
             //set length of the array
             byte bytLength = (byte)arrLeaderboard.length;
@@ -998,11 +1026,10 @@ public class GameManager {
                 writer.write(arrLeaderboard[i][0] + "," + arrLeaderboard[i][1] + "," + arrLeaderboard[i][2] + "\n");
             }
             writer.close();
-            
         }
         catch (Exception e) {
             //error msg
-            System.out.println("Corrupt file!");
+            System.out.println("Corrupt file 1!");
         }
     }
     
@@ -1051,10 +1078,10 @@ public class GameManager {
         }
         catch (Exception e) {
             //error msg
-            System.out.println("Corrupt file!");
+            System.out.println("Corrupt file 2!");
         }
         
         //output final end game and rank msg
-        System.out.println("\n\ncongratulations on beating the game! You ended up in " + bytRank + " place!");
+        System.out.println("\n\nCongratulations on beating the game! You ended up in " + bytRank + " place!");
     }
 }
