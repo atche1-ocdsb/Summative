@@ -7,6 +7,7 @@
  */
 import java.util.Scanner;
 import java.io.*;
+import java.util.ArrayList;
 
 public class GameManager {
     //code a void driver method to run the rest of the program
@@ -41,6 +42,9 @@ public class GameManager {
         
         //declare a boolean for error trapping
         boolean bolLoop = false;
+        
+        //declare a boolean to check if fileio has found a name
+        boolean bolFound = false;
         
         //declare a int to store input
         int intInput = 0;
@@ -96,6 +100,7 @@ public class GameManager {
         do {
             //dont loop
             bolLoop = false;
+            bolFound = false;
             
             //populate user
             strName = sc.nextLine();
@@ -125,6 +130,9 @@ public class GameManager {
                         
                         //check if usernames match
                         if (arrData[0].equals(strName)) {
+                            //has benn found
+                            bolFound = true;
+                            
                             //check option
                             if (intInput == 2) {
                                 //error msg
@@ -136,7 +144,7 @@ public class GameManager {
                         }
                         else {
                             //check option
-                            if (intInput == 1) {
+                            if (intInput == 1 && !bolFound) {
                                 //error msg
                                 System.out.println("Error! Username not found. Try again: ");
                                 
@@ -272,6 +280,243 @@ public class GameManager {
         //create comp grid
         Grid gridComp = new Grid();
         
-        //
+        //create a scanner
+        Scanner sc = new Scanner(System.in);
+        
+        //declare an arrayList to store the coordinates of the ships
+        ArrayList<String> shipList = new ArrayList<String>();
+        
+        //declare arrayLists to store current ship coords and comparing ship coords
+        ArrayList<String> currentList = new ArrayList<String>();
+        ArrayList<String> comparingList = new ArrayList<String>();
+        
+        //create a 10x10 char 2d array
+        char[][] arrGrid = new char[10][10];
+        
+        //declare a string to store current ship name
+        String strShip = "";
+        
+        //declare a byte to store ship size
+        byte bytSize = 0;
+        
+        //declare 2 booleans for error checking
+        boolean bolLoop = false;
+        boolean bolOutsideLoop = false;
+        
+        //fill the grid with water '~'
+        for (int r = 0; r < arrGrid.length; r++) {
+            for (int c = 0; c < arrGrid[r].length; c++) {
+                //fill
+                arrGrid[r][c] = '~';
+            }
+        }
+        
+        //output the grid 
+        System.out.println("  A B C D E F G H I J ");
+        for (int r = 0; r < arrGrid.length; r++) {
+            System.out.print(r + " ");
+            for (int c = 0; c < arrGrid.length; c++) {
+                //output
+                System.out.print(arrGrid[r][c] + " ");
+            }
+            System.out.println();
+        }
+        
+        //for loop to place the ships
+        for (int i = 0; i < 5; i++) {
+            //check index i
+            if (i == 0) {
+                strShip = "Carrier";
+                bytSize = 5;
+            }
+            else if (i == 1) {
+                strShip = "Battleship";
+                bytSize = 4;
+            }
+            else if (i == 2) {
+                strShip = "Destroyer";
+                bytSize = 3;
+            }
+            else if (i == 3) {
+                strShip = "Submarine";
+                bytSize = 3;
+            }
+            else if (i == 4) {
+                strShip = "Patrolboat";
+                bytSize = 2;
+            }
+            
+            //do/while for all ship generation
+            do {
+                //clear the currentList
+                currentList.clear();
+                
+                //dont loop
+                bolOutsideLoop = false;
+                
+                //prompt the user for the first coord
+                System.out.println("\n\nEnter the starting coordinate for the " + strShip + " of size " + bytSize + ": ");
+                
+                //do while loop to get ship coords
+                do {
+                    //add the coordinate to current ship list
+                    currentList.add(sc.nextLine());
+                    
+                    //check if its a real coordinate
+                    if (currentList.get(0).length() == 2) {
+                        //check if first character is appropriate
+                        switch(currentList.get(0).charAt(0)) {
+                            //is fine so dont loop
+                            case 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' -> bolLoop = false;
+                            default -> {
+                                bolLoop = true;
+                                
+                                //error msg
+                                System.out.println("Error! First character must be a capital letter A - J. Try again: ");
+                            } 
+                        }
+                        
+                        //if 1st is fine check 2nd
+                        if (!bolLoop) {
+                            //check if 2nd character is appropriate
+                            switch(currentList.get(0).charAt(1)) {
+                                //is fine font loop
+                                case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> bolLoop = false;
+                                default -> {
+                                    bolLoop = true;
+                                    
+                                    //error msg
+                                    System.out.println("Error! Second character must be a number ranging 0 - 9. Try again: ");
+                                } 
+                            }
+                        }
+                    }
+                    else {
+                        //loop 
+                        bolLoop = true;
+                        
+                        //error msg
+                        System.out.println("Error! Coordinate must be formated as a capital letter followed by a number (ex. A1). Try again: ");
+                    }
+                    
+                    //if loop, remove the false coordinate
+                    if (bolLoop) {
+                        currentList.remove(0);
+                    }
+                }
+                while (bolLoop);
+                
+                //prompt the user to enter end coordinate
+                System.out.println("Enter the end coordinate for the " + strShip + " of size " + bytSize + ": ");
+                
+                //do while loop to get ship coords
+                do {
+                    //add the coordinate to current ship list
+                    currentList.add(sc.nextLine());
+                    
+                    //check if its a real coordinate
+                    if (currentList.get(1).length() == 2) {
+                        //check if first character is appropriate
+                        switch(currentList.get(1).charAt(0)) {
+                            //is fine so dont loop
+                            case 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' -> bolLoop = false;
+                            default -> {
+                                bolLoop = true;
+                                
+                                //error msg
+                                System.out.println("Error! First character must be a capital letter A - J. Try again: ");
+                            } 
+                        }
+                        
+                        //if 1st is fine check 2nd
+                        if (!bolLoop) {
+                            //check if 2nd character is appropriate
+                            switch(currentList.get(1).charAt(1)) {
+                                //is fine font loop
+                                case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> bolLoop = false;
+                                default -> {
+                                    bolLoop = true;
+                                    
+                                    //error msg
+                                    System.out.println("Error! Second character must be a number ranging 0 - 9. Try again: ");
+                                } 
+                            }
+                        }
+                    }
+                    else {
+                        //loop 
+                        bolLoop = true;
+                        
+                        //error msg
+                        System.out.println("Error! Coordinate must be formated as a capital letter followed by a number (ex. A1). Try again: ");
+                    }
+                    
+                    //check if same as starting coord 
+                    if (currentList.get(0).equals(currentList.get(1))) {
+                        //loop also
+                        bolLoop = true;
+                        
+                        //error msg
+                        System.out.println("Error! End coordinate must not match the starting coordinate. Try again: ");
+                    }
+                    else {
+                        //make sure they share at least row or column
+                        if (currentList.get(0).charAt(0) != currentList.get(1).charAt(0) && currentList.get(0).charAt(1) != currentList.get(1).charAt(1)) {
+                            //loop also
+                            bolLoop = true;
+                            
+                            //error msg
+                            System.out.println("Error! The ship may not be placed diagonally. Try again: ");
+                        }
+                    }
+                    
+                    //if loop, remove the false coordinate
+                    if (bolLoop) {
+                        currentList.remove(1);
+                    }
+                }
+                while (bolLoop);
+                
+                //call the grid allCoords method to get all coords using the starting and ending coords
+                currentList = (gridComp.allCoords(currentList.get(0), currentList.get(1)));
+                
+                //check that the size of the ship is correct
+                if (currentList.size() != bytSize) {
+                    //error msg
+                    System.out.println("Error! The " + strShip + " must be of size " + bytSize + "! Try again.");
+                    
+                    //loop outside
+                    bolOutsideLoop = true;
+                }
+                else {
+                    //check for interference
+                    for (int j = 0; j < currentList.size(); j++) {
+                        //compare to every other ships coords
+                        for (int k = 0; k < i; k++) {
+                            comparingList = (gridComp.allCoords(shipList.get(2 * k), shipList.get(2 * k + 1)));
+                            
+                            //compare to each element
+                            for (int l = 0; l < comparingList.size(); l++) {
+                                if (currentList.get(j).equals(comparingList.get(l)) && !bolOutsideLoop) {
+                                    //loop outside
+                                    bolOutsideLoop = true;
+                                    
+                                    //error msg
+                                    System.out.println("Error! The ships may not overlap! Try again.");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            while (bolOutsideLoop);
+            
+            //since coords are well generated, add to shipList
+            shipList.add(currentList.get(0));
+            shipList.add(currentList.get(bytSize - 1));
+        }
+        
+        //initialize a player grid
+        Grid gridUser = new Grid(shipList);
     }
 }
