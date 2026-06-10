@@ -30,4 +30,9 @@ public class Player {
     public void setScore(byte bytNewScore) {
         this.bytScore = bytNewScore;
     }
+    
+    //code a toString to be used for fileio
+    public String toString() {
+        return "\n" + this.strName + "," + this.strPassword + "," + this.bytScore;
+    }
 }
