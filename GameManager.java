@@ -1055,6 +1055,6 @@ public class GameManager {
         }
         
         //output final end game and rank msg
-        System.out.println("\n\nCongradulations on beating the game! You ended up in " + bytRank + " place!");
+        System.out.println("\n\ncongratulations on beating the game! You ended up in " + bytRank + " place!");
     }
 }

@@ -1,3 +1,4 @@
 Artem,Yes,99
 Martin,Liu,0
 Nathaniel,B,0
+Adam,No,0
