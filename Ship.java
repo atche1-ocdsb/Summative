@@ -19,7 +19,8 @@ public class Ship {
     
     //code an empty default constructor so the class instance can be used for its methods
     Ship() {
-        
+        //initialize instance variable
+        this.allCoordsList = null;
     }
         
     //code a getter for the coordlist

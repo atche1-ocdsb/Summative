@@ -21,6 +21,16 @@ public class Player {
         this.bytScore = s;
     }
     
+    //code a default constructor to allow for initialization of player
+    Player() {
+        //initialize the instance variables
+        this.strName = "";
+        this.strPassword = "";
+        this.bytScore = -1;
+    }
+    //code a getter for the name
+    public String getName() { return this.strName; }
+    
     //code a getter method for the score
     public byte getScore() {
         return this.bytScore;

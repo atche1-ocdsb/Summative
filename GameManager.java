@@ -15,20 +15,39 @@ public class GameManager {
         //declare a grid arrayList to store user and comp grids
         ArrayList<Grid> gridList = new ArrayList<Grid>();
         
+        //declare a player variable to store the current player
+        Player p1;
+        
         //declare a byte to store user's score
         byte bytScore;
         
         //output instructions
         instructions();
         
-        //prompt the player to login
-        logIn();
+        //prompt the player to login and populate him
+        p1 = logIn();
         
         //create comp and user grids
         gridList = createBoards();
         
         //start the user's turn with score of 0 and an empty hit array and populate the final score to the byte variable
         bytScore = turn(new ArrayList<String>(), new ArrayList<String>(), gridList.get(0), gridList.get(1), (byte)0);
+        
+        //check win
+        if (bytScore != -1) {
+            //win msg
+            System.out.println("You won with a score of " + bytScore + "!");
+            
+            //check if new highscore
+            updateScore(bytScore, p1);
+            
+            //output the leaderboard
+            leaderBoard(p1);
+        }
+        else {
+            //lose msg
+            System.out.println("You lost...");
+        }  
     }
     
     //code a void method to output the instructions
@@ -44,10 +63,13 @@ public class GameManager {
         + "\n");
     }
     
-    //code a void method that will handle all of the login steps
-    public void logIn() {
+    //code a Player method that will handle all of the login steps and return the player
+    public Player logIn() {
         //create a scanner
         Scanner sc = new Scanner(System.in);
+        
+        //declare a player to be populated later
+        Player p1 = new Player();
         
         //declare a boolean for error trapping
         boolean bolLoop = false;
@@ -250,7 +272,7 @@ public class GameManager {
                     //check if usernames match
                     if (arrData[0].equals(strName)) {
                         //create an instance of this player
-                        Player p1 = new Player(arrData[0], arrData[1], Byte.parseByte(arrData[2]));
+                        p1 = new Player(arrData[0], arrData[1], Byte.parseByte(arrData[2]));
                     }
                 }
                 
@@ -264,7 +286,7 @@ public class GameManager {
         }
         else {
             //create a new player with score 0
-            Player p1 = new Player(strName, strPassword, (byte)0);
+            p1 = new Player(strName, strPassword, (byte)0);
             
             //try/catch to add the player to the file
             try {
@@ -282,6 +304,9 @@ public class GameManager {
                 System.out.println("Error writing to file!");
             }
         }
+        
+        //return the player
+        return p1;
     }
 
     //code a ArrayList<Grid> method to create/initialize the player's and comp's boards by calling the Grid class and return both grids
@@ -868,5 +893,168 @@ public class GameManager {
         
         //since neither player won on this turn, proceed to next turn
         return turn(compHitsList, hitsList, gridComp, gridUser, bytScore += 1);
+    }
+    
+    //code a void method to check and update highscore
+    public void updateScore(byte bytScore, Player p1) {
+        //declare a String array to store input from fileio
+        String[] arrData = new String[3];
+        
+        //declare an ArrayList to act as temp storage to store row by row
+        ArrayList<String[]> linesList = new ArrayList<String[]>();
+        
+        //declare a 2d array to be used for sorting
+        String[][] arrLeaderboard;
+        
+        //declare a boolean to store new highscore?
+        boolean bolHS = false;
+        
+        //try catch to find player
+        try {
+            //declare a scanner for fileio use
+            Scanner reader = new Scanner(new FileReader("Players.txt"));
+            
+            //while loop to loop through file
+            while(reader.hasNextLine()) {
+                //populate line's data to array
+                arrData = reader.nextLine().split(",");
+                
+                //store into lines array
+                linesList.add(arrData);
+                
+                //check if usernames match
+                if (arrData[0].equals(p1.getName())) {
+                    //compare scores
+                    if (!arrData[3].equals("0")) {
+                        if (Byte.parseByte(arrData[3]) > bytScore) {
+                            //new highscore
+                            bolHS = true;
+                        }
+                    }
+                }
+                    
+            }
+            
+            //close reader
+            reader.close();
+            
+            //create a filewriter to wipe the file
+            FileWriter clearWriter = new FileWriter("Players.txt");
+            clearWriter.close();
+            
+            //create a filewriter to write to file with new hs
+            FileWriter writer = new FileWriter("Players.txt", true);
+            
+            //initialize leaderboard size
+            arrLeaderboard = new String[linesList.size()][3];
+            
+            //transfer data from arrayList to array
+            for (int i = 0; i < arrLeaderboard.length; i++) {
+                //set data
+                arrLeaderboard[i][0] = linesList.get(i)[0];
+                arrLeaderboard[i][1] = linesList.get(i)[1];
+                
+                //check for current player
+                if (linesList.get(i)[0].equals(p1.getName())) {
+                    arrLeaderboard[i][2] = linesList.get(i)[bytScore];
+                }
+                else {
+                    arrLeaderboard[i][2] = linesList.get(i)[2];
+                }
+            }
+            
+            //selection sort through array based off of score
+            //set length of the array
+            byte bytLength = (byte)arrLeaderboard.length;
+            
+            //set a temporary variable for swapping
+            String[] arrTemp;
+            
+            //set a minimum index variable
+            byte bytMinIndex;
+            
+            //loop through unsorted array, adjusting boudary each time
+            for (int i = 0; i < bytLength - 1; i++) {
+                //set current index of i to be minimum
+                bytMinIndex = (byte)i;
+                
+                //loop through unsorted remaining part of array
+                for (int j = i + 1; j < bytLength; j++) {
+                    //compare to find min
+                    if (Byte.parseByte(arrLeaderboard[j][2]) < Byte.parseByte(arrLeaderboard[bytMinIndex][2])) {
+                        //update new min
+                        bytMinIndex = (byte)j;
+                    }
+                }
+                
+                //swap the new min with first element of remaining unsorted array
+                arrTemp = arrLeaderboard[bytMinIndex];
+                arrLeaderboard[bytMinIndex] = arrLeaderboard[i];
+                arrLeaderboard[i] = arrTemp;
+            }
+            
+            //write everything back
+            for (int i = 0; i < arrLeaderboard.length; i++) {
+                writer.write(arrLeaderboard[i][0] + "," + arrLeaderboard[i][1] + "," + arrLeaderboard[i][2] + "\n");
+            }
+            writer.close();
+            
+        }
+        catch (Exception e) {
+            //error msg
+            System.out.println("Corrupt file!");
+        }
+    }
+    
+    //code a void method to output the leaderboard
+    public void leaderBoard(Player p1) {
+        //declare a String array to store input from fileio
+        String[] arrData = new String[3];
+        
+        //declare a byte counter to be used for sequential search
+        byte bytCounter = 0;
+        
+        //declare a byte variabel to save counter number when player is reached
+        byte bytRank = 0;
+        
+        //try catch to read file and write it to the screen
+        try {
+            //declare a scanner for fileio use
+            Scanner reader = new Scanner(new FileReader("Players.txt"));
+            
+            //output leaderboard msg
+            System.out.println("\n\n\nLeaderboard: ");
+            
+            //while loop to loop through file
+            while(reader.hasNextLine()) {
+                //increase counter
+                bytCounter++;
+                
+                //populate line's data to array
+                arrData = reader.nextLine().split(",");
+                
+                //if non zero
+                if (!arrData[2].equals("0")) {
+                    //write out the names and scores
+                    System.out.println(" - " + arrData[0] + ": " + arrData[2]);
+                }
+                
+                //check if player
+                if (arrData[0].equals(p1.getName())) {
+                    //set rank
+                    bytRank = bytCounter;
+                }
+            }
+            
+            //close reader
+            reader.close();
+        }
+        catch (Exception e) {
+            //error msg
+            System.out.println("Corrupt file!");
+        }
+        
+        //output final end game and rank msg
+        System.out.println("\n\nCongradulations on beating the game! You ended up in " + bytRank + " place!");
     }
 }
