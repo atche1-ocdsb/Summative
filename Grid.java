@@ -30,6 +30,17 @@ public class Grid {
     //declare and initialize a private 2d array of type char to be used as the 10 by 10 game grids to store computers grid
     private char[][] arrCompGrid = new char[10][10];
     
+    //declare 5 user and 5 comp ship instance variables
+    private Ship userCarrier;
+    private Ship userBattleship;
+    private Ship userDestroyer;
+    private Ship userSubmarine;
+    private Ship userPatrolboat;
+    private Ship compCarrier;
+    private Ship compBattleship;
+    private Ship compDestroyer;
+    private Ship compSubmarine;
+    private Ship compPatrolboat;
     
     //code a parameterized constructor to initialize the coordinate when the user's board is being created
     Grid(ArrayList<String> c) {
@@ -37,14 +48,23 @@ public class Grid {
         this.coordsList = c;
         
         //create instances of all 5 ships
-        Ship userCarrier = new Carrier(allCoords(this.coordsList.get(0), this.coordsList.get(1)));
-        Ship userBattleship = new Battleship(allCoords(this.coordsList.get(2), this.coordsList.get(3)));
-        Ship userDestroyer = new Destroyer(allCoords(this.coordsList.get(4), this.coordsList.get(5)));
-        Ship userSubmarine = new Submarine(allCoords(this.coordsList.get(6), this.coordsList.get(7)));
-        Ship userPatrolboat = new Patrolboat(allCoords(this.coordsList.get(8), this.coordsList.get(9)));
+        this.userCarrier = new Carrier(allCoords(this.coordsList.get(0), this.coordsList.get(1)));
+        this.userBattleship = new Battleship(allCoords(this.coordsList.get(2), this.coordsList.get(3)));
+        this.userDestroyer = new Destroyer(allCoords(this.coordsList.get(4), this.coordsList.get(5)));
+        this.userSubmarine = new Submarine(allCoords(this.coordsList.get(6), this.coordsList.get(7)));
+        this.userPatrolboat = new Patrolboat(allCoords(this.coordsList.get(8), this.coordsList.get(9)));
         
         //using the given coordinates, populate the arrGrid
         this.arrUserGrid = initializeGrid();
+        
+        //output the grid
+        for (int r = 0; r < this.arrUserGrid.length; r++) {
+            for (int d = 0; d < this.arrUserGrid.length; d++) {
+                //output
+                System.out.print(arrUserGrid[r][d] + " ");
+            }
+            System.out.println();
+        }
     }
     
     //code a default constructor to be called when creating the computer's board and used to randomize the ship coords
@@ -53,11 +73,11 @@ public class Grid {
         this.coordsList = generateShips();
         
         //create instances of all 5 ships
-        Ship compCarrier = new Carrier(allCoords(this.coordsList.get(0), this.coordsList.get(1)));
-        Ship compBattleship = new Battleship(allCoords(this.coordsList.get(2), this.coordsList.get(3)));
-        Ship compDestroyer = new Destroyer(allCoords(this.coordsList.get(4), this.coordsList.get(5)));
-        Ship compSubmarine = new Submarine(allCoords(this.coordsList.get(6), this.coordsList.get(7)));
-        Ship compPatrolboat = new Patrolboat(allCoords(this.coordsList.get(8), this.coordsList.get(9)));
+        this.compCarrier = new Carrier(allCoords(this.coordsList.get(0), this.coordsList.get(1)));
+        this.compBattleship = new Battleship(allCoords(this.coordsList.get(2), this.coordsList.get(3)));
+        this.compDestroyer = new Destroyer(allCoords(this.coordsList.get(4), this.coordsList.get(5)));
+        this.compSubmarine = new Submarine(allCoords(this.coordsList.get(6), this.coordsList.get(7)));
+        this.compPatrolboat = new Patrolboat(allCoords(this.coordsList.get(8), this.coordsList.get(9)));
         
         //using the given coordinates, populate the arrGrid
         this.arrCompGrid = initializeGrid();
@@ -71,6 +91,18 @@ public class Grid {
             System.out.println();
         }
     }
+    
+    //code getters for all 10 ships
+    public Ship getUserCarrier() { return this.userCarrier; }
+    public Ship getUserBattleship() { return this.userBattleship; }
+    public Ship getUserDestroyer() { return this.userDestroyer; }
+    public Ship getUserSubmarine() { return this.userSubmarine; }
+    public Ship getUserPatrolboat() { return this.userPatrolboat; }
+    public Ship getCompCarrier() { return this.compCarrier; }
+    public Ship getCompBattleship() { return this.compBattleship; }
+    public Ship getCompDestroyer() { return this.compDestroyer; }
+    public Ship getCompSubmarine() { return this.compSubmarine; }
+    public Ship getCompPatrolboat() { return this.compPatrolboat; }
     
     //code a ArrayList<String> method to randomly generate the ship coords for the computer grid and return them into the default constructor
     public ArrayList<String> generateShips() {

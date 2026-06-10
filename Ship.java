@@ -16,6 +16,11 @@ public class Ship {
         //initialize instance variable
         this.allCoordsList = a;
     }
+        
+    //code a getter for the coordlist
+    public ArrayList<String> getCoordList() {
+        return this.allCoordsList;
+    }
     
     //code a boolean method to check if the ship has been hit
     public boolean isHit(String strShot, ArrayList<String> coordsList) {
@@ -32,13 +37,8 @@ public class Ship {
         return false;
     }
     
-    //code a getter for the coordlist
-    public ArrayList<String> getCoordList() {
-        return this.allCoordsList;
-    }
-    
     //code a boolean method to check if the ship has been destroyed
-    public boolean isDestroyed(String[] arrHits, ArrayList<String> coordsList) {
+    public boolean isDestroyed(ArrayList<String> hitsList, ArrayList<String> coordsList) {
         //declare a boolean array of same length as coords array
         boolean[] arrIsHit = new boolean[coordsList.size()];
         
@@ -51,9 +51,9 @@ public class Ship {
         //for loop to compare the two arrays
         for (int i = 0; i < coordsList.size(); i++) {
             //for loop to loop through second array
-            for (int j = 0; j < arrHits.length; j++) {
+            for (int j = 0; j < hitsList.size(); j++) {
                 //if statement to check if this coord exists
-                if (coordsList.get(i).equals(arrHits[j])) {
+                if (coordsList.get(i).equals(hitsList.get(j))) {
                     //set the coord index to true
                     arrIsHit[i] = true;
                 }

@@ -12,6 +12,12 @@ import java.util.ArrayList;
 public class GameManager {
     //code a void driver method to run the rest of the program
     public void run() {
+        //declare a grid arrayList to store user and comp grids
+        ArrayList<Grid> gridList = new ArrayList<Grid>();
+        
+        //declare a byte to store user's score
+        byte bytScore;
+        
         //output instructions
         instructions();
         
@@ -19,7 +25,10 @@ public class GameManager {
         logIn();
         
         //create comp and user grids
-        createBoards();
+        gridList = createBoards();
+        
+        //start the user's turn with score of 0 and an empty hit array and populate the final score to the byte variable
+        bytScore = turn(new ArrayList<String>(), gridList.get(0), gridList.get(1), (byte)0);
     }
     
     //code a void method to output the instructions
@@ -275,8 +284,11 @@ public class GameManager {
         }
     }
 
-    //code a void method to create/initialize the player's and comp's boards by calling the Grid class
-    public void createBoards() {
+    //code a ArrayList<Grid> method to create/initialize the player's and comp's boards by calling the Grid class and return both grids
+    public ArrayList<Grid> createBoards() {
+        //create a grid arraylist
+        ArrayList<Grid> gridList = new ArrayList<Grid>();
+        
         //create comp grid
         Grid gridComp = new Grid();
         
@@ -521,7 +533,10 @@ public class GameManager {
                 arrGrid[Character.getNumericValue(currentList.get(j).charAt(1))][currentList.get(j).charAt(0) - 65] = strShip.charAt(0);
             }
             
-            //output the grid 
+            //output grid msg
+            System.out.println("\nUpdated grid: ");
+            
+            //output grid
             System.out.println("  A B C D E F G H I J ");
             for (int r = 0; r < arrGrid.length; r++) {
                 System.out.print(r + " ");
@@ -535,5 +550,42 @@ public class GameManager {
             
         //initialize a player grid
         Grid gridUser = new Grid(shipList);
+        
+        //populate array with both grids
+        gridList.add(gridComp);
+        gridList.add(gridUser);
+        
+        //return an arraylist of both grids
+        return gridList;
+    }
+    
+    //code a recursive byte turn method that will manage what happens each turn
+    public byte turn(ArrayList<String> hitsList, Grid gridComp, Grid gridUser, byte bytScore) {
+        //base case 1:
+        if (gridUser.getUserCarrier().isDestroyed(hitsList, gridUser.getUserCarrier().getCoordList())
+            && gridUser.getUserBattleship().isDestroyed(hitsList, gridUser.getUserBattleship().getCoordList())
+            && gridUser.getUserDestroyer().isDestroyed(hitsList, gridUser.getUserDestroyer().getCoordList())
+            && gridUser.getUserSubmarine().isDestroyed(hitsList, gridUser.getUserSubmarine().getCoordList())
+            && gridUser.getUserPatrolboat().isDestroyed(hitsList, gridUser.getUserPatrolboat().getCoordList())
+            ) {
+            //user lost, return score of -1
+            return -1;
+        }
+        
+        //base case 2:
+        if (gridComp.getCompCarrier().isDestroyed(hitsList, gridComp.getCompCarrier().getCoordList())
+            && gridComp.getCompBattleship().isDestroyed(hitsList, gridComp.getCompBattleship().getCoordList())
+            && gridComp.getCompDestroyer().isDestroyed(hitsList, gridComp.getCompDestroyer().getCoordList())
+            && gridComp.getCompSubmarine().isDestroyed(hitsList, gridComp.getCompSubmarine().getCoordList())
+            && gridComp.getCompPatrolboat().isDestroyed(hitsList, gridComp.getCompPatrolboat().getCoordList())
+            ) {
+            //comp lost, user won, return score
+            return bytScore;
+        }
+        
+        //output the two grids to the user
+        System.out.println();
+        
+        return 0;
     }
 }
