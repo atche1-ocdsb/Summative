@@ -461,7 +461,7 @@ public class GameManager {
                     }
                     else {
                         //make sure they share at least row or column
-                        if (currentList.get(0).charAt(0) != currentList.get(1).charAt(0) && currentList.get(0).charAt(1) != currentList.get(1).charAt(1)) {
+                        if (currentList.get(0).charAt(0) != currentList.get(1).charAt(0) && currentList.get(0).charAt(1) != currentList.get(1).charAt(1) && !bolLoop) {
                             //loop also
                             bolLoop = true;
                             
@@ -514,8 +514,25 @@ public class GameManager {
             //since coords are well generated, add to shipList
             shipList.add(currentList.get(0));
             shipList.add(currentList.get(bytSize - 1));
+            
+            //fill in the ship
+            for (int j = 0; j < currentList.size(); j++) {
+                //fill in by adjusting ASCII values for columns
+                arrGrid[Character.getNumericValue(currentList.get(j).charAt(1))][currentList.get(j).charAt(0) - 65] = strShip.charAt(0);
+            }
+            
+            //output the grid 
+            System.out.println("  A B C D E F G H I J ");
+            for (int r = 0; r < arrGrid.length; r++) {
+                System.out.print(r + " ");
+                for (int c = 0; c < arrGrid.length; c++) {
+                    //output
+                    System.out.print(arrGrid[r][c] + " ");
+                }
+                System.out.println();
+            }
         }
-        
+            
         //initialize a player grid
         Grid gridUser = new Grid(shipList);
     }
